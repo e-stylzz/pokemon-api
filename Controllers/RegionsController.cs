@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PokemonAPI.DTO;
 using PokemonAPI.Models;
 
 namespace PokemonAPI.Controllers
@@ -15,10 +17,12 @@ namespace PokemonAPI.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly PokemonContext _context;
+        private readonly IMapper _mapper;
 
-        public RegionsController(PokemonContext context)
+        public RegionsController(PokemonContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Regions
@@ -32,15 +36,15 @@ namespace PokemonAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Region>> GetRegion(int id)
         {
-    
-            var region = await _context.Regions.FirstOrDefaultAsync(a => a.id == id);
+
+            var region = await _context.Regions.Where(a => a.id == id).Include(c => c.PokemonRegions).ThenInclude(cs => cs.Pokemon).ToListAsync(); ;
 
             if (region == null)
             {
                 return NotFound();
             }
 
-            return region;
+            return Ok(_mapper.Map<IEnumerable<RegionPokemonDTO>>(region));
         }
 
 

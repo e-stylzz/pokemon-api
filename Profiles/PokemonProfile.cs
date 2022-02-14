@@ -11,9 +11,9 @@ namespace PokemonAPI.Profiles
 		{
 			CreateMap<Pokemon, PokemonDTO>()
 				.ForMember(dto => dto.Regions, c => c.MapFrom(c => c.PokemonRegions.Select(cs => cs.Region)));
-			//CreateMap<Character, GetCharacterDto>()
-			//	.ForMember(dto => dto.Skills, c => c.MapFrom(c => c.CharacterSkills.Select(cs => cs.Skill)));
 
+			CreateMap<Pokemon, PokemonSummaryDTO>()
+				.ReverseMap();
 		}
 	}
 }
